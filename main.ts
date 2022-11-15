@@ -11,6 +11,9 @@ router.get("/private/:mediaProxy", async ctx=>{
 router.get("/private", async ctx=>{
   ctx.response.body = await getSubscribeDetail(true)
 })
+router.get("/",  ctx=>{
+  ctx.response.body = "hello world"
+})
 const app = new Application();
 app.use(router.routes());
 
