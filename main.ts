@@ -5,8 +5,11 @@ const port = Deno.env.get("PORT") ?? "80";
 
 const router = new Router();
 
+router.get("/private/:mediaProxy", async ctx=>{
+  ctx.response.body = await getSubscribeDetail(ctx.params?.mediaProxy =="true")
+})
 router.get("/private", async ctx=>{
-  ctx.response.body = await getSubscribeDetail(false,true)
+  ctx.response.body = await getSubscribeDetail(true)
 })
 const app = new Application();
 app.use(router.routes());

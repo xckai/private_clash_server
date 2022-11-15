@@ -128,12 +128,11 @@ function url2ProxyInfo(url:string) {
   return undefined;
 }
 
-async function loadTemplate(byURL:boolean):Promise<any> {
-  if (byURL) {
-    console.debug("加载模板 by env");
-    const url = Deno.env.get("templateURL")
-    assert(url,"Template URL is null")
-    return yaml.load(await fetchWithTimeout(url));
+async function loadTemplate():Promise<any> {
+  const url = Deno.env.get("templateURL")
+  if (url) {
+    console.debug("加载模板 by url: "+url);
+      return yaml.load(await fetchWithTimeout(url));
   } else {
     console.debug("加载模板 by local file");
     return yaml.load(
@@ -142,15 +141,15 @@ async function loadTemplate(byURL:boolean):Promise<any> {
   }
 }
 export async  function getSubscribeDetail  (
-  loadTemplateByEnvUrl:boolean,
   specificHandleMediaProxy = true
 ) {
+  console.log(specificHandleMediaProxy)
   const allProxys = decodeBase64ToString(await getProxyListWithRetry())
     .split("\r\n")
     .map(url2ProxyInfo)
     .filter((p:any) => !!p);
   const mediaProxy = allProxys.filter((p:any) => !p.name.startsWith("香港"));
-  const templateObj = await loadTemplate(loadTemplateByEnvUrl);
+  const templateObj = await loadTemplate();
   templateObj.proxies = allProxys;
   if (specificHandleMediaProxy) {
     templateObj["proxy-groups"][0].proxies = allProxys.map((p) => p.name);
