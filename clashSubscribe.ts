@@ -1,32 +1,37 @@
 import { assert } from "https://deno.land/std@0.164.0/testing/asserts.ts";
 import * as path from "https://deno.land/std/path/mod.ts";
-import yaml from"https://esm.sh/js-yaml@4.1.0";
-import {
-    decode as base64Decode,
-  } from 'https://deno.land/std@0.164.0/encoding/base64.ts';
+import yaml from "https://esm.sh/js-yaml@4.1.0";
+import { decode as base64Decode } from "https://deno.land/std@0.164.0/encoding/base64.ts";
 
 let lastUpdateDate = new Date();
-let lastSuccessResp =Deno.env.get("bootstrapResp") ??  "";
+let lastSuccessResp = Deno.env.get("bootstrapResp") ?? "";
 let lastRemoteUpdateSuccess = false;
-function sendMessage(message:string) {
-  let notificationURL =
-    Deno.env.get("notificationURL")
-  if (notificationURL) {
-    notificationURL = notificationURL + "?title=" + encodeURIComponent(message);
-    fetchWithTimeout(notificationURL,{timeout:10000})
+async function sendMessage(message: string) {
+  try {
+    let notificationURL = Deno.env.get("notificationURL");
+    if (notificationURL) {
+      notificationURL =
+        notificationURL + "?title=" + encodeURIComponent(message);
+      await fetchWithTimeout(notificationURL, { timeout: 10000 });
+    }
+  } catch (e) {
+    console.error("sendMessage error: " + e.message);
   }
 }
-function decodeBase64ToString(str:string){
+function decodeBase64ToString(str: string) {
   return new TextDecoder("utf8").decode(base64Decode(str)).toString();
 }
-async function fetchWithTimeout(resource:string, options : {timeout?:number} ={}) {
+async function fetchWithTimeout(
+  resource: string,
+  options: { timeout?: number } = {}
+) {
   const { timeout = 8000 } = options;
 
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   const response = await fetch(resource, {
     ...options,
-    signal: controller.signal
+    signal: controller.signal,
   });
   clearTimeout(id);
   return await response.text();
@@ -38,7 +43,7 @@ export async function getProxyListWithRetry() {
   while (retryTimes++ < 2) {
     try {
       const respData = await getProxyListAsync();
-      console.log(respData)
+      console.log(respData);
       lastUpdateDate = new Date();
       lastRemoteUpdateSuccess = true;
       lastSuccessResp = respData;
@@ -46,7 +51,8 @@ export async function getProxyListWithRetry() {
       return respData;
     } catch (e) {
       console.error("获取订阅信息失败 重试: " + retryTimes, e);
-      const delay = (ms:number) => new Promise((resolve) => setTimeout(resolve, ms));
+      const delay = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
       await delay(3000);
     }
   }
@@ -54,17 +60,16 @@ export async function getProxyListWithRetry() {
 
   return lastSuccessResp;
 }
-export async function getProxyListAsync():Promise<string> {
-  const subscribeURL =
-    Deno.env.get("subscribeURL")
+export async function getProxyListAsync(): Promise<string> {
+  const subscribeURL = Deno.env.get("subscribeURL");
   assert(!!subscribeURL, "订阅URL未设置,环境变量: subscribeURL");
-  const resp = await fetchWithTimeout(subscribeURL,{timeout:5000});
+  const resp = await fetchWithTimeout(subscribeURL, { timeout: 5000 });
   return resp;
 }
-function decode(str:string| null) {
-  return str && base64Decode(str)
+function decode(str: string | null) {
+  return str && base64Decode(str);
 }
-function parseSSR(url:string) {
+function parseSSR(url: string) {
   const URI = decodeBase64ToString(url.replace("ssr://", "")).split(":");
   const params = new URLSearchParams(URI[5].split("/")[1]);
   return {
@@ -80,10 +85,10 @@ function parseSSR(url:string) {
     group: decode(params.get("group")),
   };
 }
-function parseSS(url:string) {
+function parseSS(url: string) {
   const URI = url.replace("ss://", "").split("@");
   const params = new URLSearchParams(URI[1].split("?")[1]);
-  const parsedProxy:any = {
+  const parsedProxy: any = {
     type: "ss",
     cipher: decodeBase64ToString(URI[0]).split(":")[0],
 
@@ -117,7 +122,7 @@ function parseSS(url:string) {
   }
   return parsedProxy;
 }
-function url2ProxyInfo(url:string) {
+function url2ProxyInfo(url: string) {
   url = decodeURIComponent(url);
   if (url.startsWith("ss:")) {
     return parseSS(url);
@@ -128,27 +133,33 @@ function url2ProxyInfo(url:string) {
   return undefined;
 }
 
-async function loadTemplate():Promise<any> {
-  const url = Deno.env.get("templateURL")
+async function loadTemplate(): Promise<any> {
+  const url = Deno.env.get("templateURL");
   if (url) {
-    console.debug("加载模板 by url: "+url);
-      return yaml.load(await fetchWithTimeout(url));
+    console.debug("加载模板 by url: " + url);
+    try {
+      const text = await fetchWithTimeout(url);
+      return yaml.load(text);
+    } catch (e) {
+      console.error("loadTemplate error: " + e.message);
+      throw e;
+    }
   } else {
     console.debug("加载模板 by local file");
     return yaml.load(
-      new TextDecoder("utf-8").decode(Deno.readFileSync(path.resolve("./", "./template.yaml")))
+      new TextDecoder("utf-8").decode(
+        Deno.readFileSync(path.resolve(Deno.cwd(), "./template.yaml"))
+      )
     );
   }
 }
-export async  function getSubscribeDetail  (
-  specificHandleMediaProxy = true
-) {
-  console.log(specificHandleMediaProxy)
+export async function getSubscribeDetail(specificHandleMediaProxy = true) {
+  console.log(specificHandleMediaProxy);
   const allProxys = decodeBase64ToString(await getProxyListWithRetry())
     .split("\r\n")
     .map(url2ProxyInfo)
-    .filter((p:any) => !!p);
-  const mediaProxy = allProxys.filter((p:any) => !p.name.startsWith("香港"));
+    .filter((p: any) => !!p);
+  const mediaProxy = allProxys.filter((p: any) => !p.name.startsWith("香港"));
   const templateObj = await loadTemplate();
   templateObj.proxies = allProxys;
   if (specificHandleMediaProxy) {
