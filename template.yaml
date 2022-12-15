@@ -116,6 +116,8 @@ rules:
  - DOMAIN-SUFFIX,cloudflare-dns.com,基础代理
  - DOMAIN-SUFFIX,codesandbox.io,个人偏好
  - DOMAIN-SUFFIX,stackoverflow.com,个人偏好
+ - DOMAIN-SUFFIX,gcr.io,个人偏好
+ - DOMAIN-SUFFIX,docker.io,个人偏好
  - DOMAIN-SUFFIX,dksb.store,个人偏好
  - DOMAIN-SUFFIX,sstatic.net,个人偏好
  - DOMAIN-SUFFIX,ant.design,个人偏好
