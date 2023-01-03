@@ -135,6 +135,8 @@ rules:
  - DOMAIN-SUFFIX,medium.com,🌍 国外媒体
  - DOMAIN-SUFFIX,cnn.com,🌍 国外媒体
  - DOMAIN-SUFFIX,cnn.io,🌍 国外媒体
+ - DOMAIN-SUFFIX,scmp.com,🌍 国外媒体
+ - DOMAIN-SUFFIX,i-scmp.com,🌍 国外媒体
  - DOMAIN-SUFFIX,twitch.tv,🌍 国外媒体
  - DOMAIN-SUFFIX,twitchcdn.net,🌍 国外媒体
  - DOMAIN,radio.itunes.apple.com,🌍 国外媒体
