@@ -107,6 +107,8 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+ - DOMAIN-SUFFIX,xckai.top,DIRECT
+ - DOMAIN-SUFFIX,xckai.synology.me,DIRECT
  - IP-CIDR,1.1.1.1/32,基础代理,no-resolve
  - IP-CIDR,1.0.0.1/32,基础代理,no-resolve
  - IP-CIDR,8.8.8.8/32,基础代理,no-resolve
