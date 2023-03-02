@@ -1,18 +1,22 @@
 import { Application,Router } from "https://deno.land/x/oak/mod.ts";
-import {getSubscribeDetail} from "./clashSubscribe.ts"
+import {fetchAllProxy, getSubscribeDetail} from "./clashSubscribe.ts"
+import "https://deno.land/x/dotenv/load.ts";
 
 const port = Deno.env.get("PORT") ?? "80";
-
+console.log(port,Deno.env.get("subscribeURL"))
 const router = new Router();
 
 router.get("/private/:mediaProxy", async ctx=>{
   ctx.response.body = await getSubscribeDetail(ctx.params?.mediaProxy =="true")
 })
 router.get("/private", async ctx=>{
-  ctx.response.body = await getSubscribeDetail(true)
+  ctx.response.body = await getSubscribeDetail(false)
 })
 router.get("/",  ctx=>{
   ctx.response.body = "hello world"
+})
+router.get("/test",  async ctx=>{
+  ctx.response.body = await fetchAllProxy()
 })
 const app = new Application();
 app.use(router.routes());

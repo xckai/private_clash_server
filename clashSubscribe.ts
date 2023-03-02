@@ -6,6 +6,39 @@ import { decode as base64Decode } from "https://deno.land/std@0.164.0/encoding/b
 let lastUpdateDate = new Date();
 let lastSuccessResp = Deno.env.get("bootstrapResp") ?? "";
 let lastRemoteUpdateSuccess = false;
+function getAllSubscribeUrl(){
+  const url=[];
+  for(let i =0;i<10 ;++i){
+    let u =  Deno.env.get("subscribeURL"+i);
+    if(i ==0){
+      u=  Deno.env.get("subscribeURL");
+    }
+    if(!!u){
+      url.push(u)
+    }
+  }
+  if(url.length ==0){
+    throw new Error("订阅URL未设置,环境变量: subscribeURL、subscribeURL1、subscribeURL2、")
+  }
+  console.log(url)
+  return url;
+}
+export async function  fetchAllProxy() {
+  const promises = getAllSubscribeUrl().map(async u=> await (await fetch(u)).text());
+  const results = (await Promise.allSettled(promises)).filter(r=>r.status!="rejected").map(r=>(<any>r).value);;
+  if(results.length ==0){
+    throw new Error("所有订阅不可用")
+  }
+  return results.map(r=>decodeBase64ToString(r)
+  .split("\r\n")
+  .map(url2ProxyInfo)
+  .filter((p: any) => !!p)).reduce((p,crtValue)=>p.concat(crtValue),[]);
+}
+
+
+
+
+
 async function sendMessage(message: string) {
   try {
     let notificationURL = Deno.env.get("notificationURL");
@@ -155,10 +188,7 @@ async function loadTemplate(): Promise<any> {
 }
 export async function getSubscribeDetail(specificHandleMediaProxy = true) {
   console.log(specificHandleMediaProxy);
-  const allProxys = decodeBase64ToString(await getProxyListWithRetry())
-    .split("\r\n")
-    .map(url2ProxyInfo)
-    .filter((p: any) => !!p);
+  const allProxys = await fetchAllProxy();
   const mediaProxy = allProxys.filter((p: any) => !p.name.startsWith("香港"));
   const templateObj = await loadTemplate();
   templateObj.proxies = allProxys;
