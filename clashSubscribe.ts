@@ -1,44 +1,62 @@
 import { assert } from "https://deno.land/std@0.164.0/testing/asserts.ts";
 import * as path from "https://deno.land/std/path/mod.ts";
+import { Request } from "https://deno.land/x/oak/mod.ts";
+
 import yaml from "https://esm.sh/js-yaml@4.1.0";
 import { decode as base64Decode } from "https://deno.land/std@0.164.0/encoding/base64.ts";
-
+import TelegramBot from "https://esm.sh/node-telegram-bot-api@0.61.0";
 let lastUpdateDate = new Date();
 let lastSuccessResp = Deno.env.get("bootstrapResp") ?? "";
 let lastRemoteUpdateSuccess = false;
-function getAllSubscribeUrl(){
-  const url=[];
-  for(let i =0;i<10 ;++i){
-    let u =  Deno.env.get("subscribeURL"+i);
-    if(i ==0){
-      u=  Deno.env.get("subscribeURL");
+const telegramBot = new TelegramBot(
+  "5971031891:AAG5hAedEmTkjEEm_aGjc4d4YZ-RvBLL4n8",
+  { polling: false, webHook: false }
+);
+function getAllSubscribeUrl() {
+  const url = [];
+  for (let i = 0; i < 10; ++i) {
+    let u = Deno.env.get("subscribeURL" + i);
+    if (i == 0) {
+      u = Deno.env.get("subscribeURL");
     }
-    if(!!u){
-      url.push(u)
+    if (!!u) {
+      url.push(u);
     }
   }
-  if(url.length ==0){
-    throw new Error("订阅URL未设置,环境变量: subscribeURL、subscribeURL1、subscribeURL2、")
+  if (url.length == 0) {
+    throw new Error(
+      "订阅URL未设置,环境变量: subscribeURL、subscribeURL1、subscribeURL2、"
+    );
   }
-  console.log(url)
+  console.log(url);
   return url;
 }
-export async function  fetchAllProxy() {
-  const promises = getAllSubscribeUrl().map(async u=> await (await fetch(u)).text());
-  const results = (await Promise.allSettled(promises)).filter(r=>r.status!="rejected").map(r=>(<any>r).value);;
-  if(results.length ==0){
-    throw new Error("所有订阅不可用")
+export async function fetchAllProxy() {
+  const promises = getAllSubscribeUrl().map(
+    async (u) => await (await fetch(u)).text()
+  );
+  const results = (await Promise.allSettled(promises))
+    .filter((r) => r.status != "rejected")
+    .map((r) => (<any>r).value);
+  if (results.length == 0) {
+    throw new Error("所有订阅不可用");
   }
-  return results.map(r=>decodeBase64ToString(r)
-  .split("\r\n")
-  .map(url2ProxyInfo)
-  .filter((p: any) => !!p)).reduce((p,crtValue)=>p.concat(crtValue),[]);
+  return results
+    .map((r) =>
+      decodeBase64ToString(r)
+        .split("\r\n")
+        .map(url2ProxyInfo)
+        .filter((p: any) => !!p)
+    )
+    .reduce((p, crtValue) => p.concat(crtValue), []);
 }
-
-
-
-
-
+export function sendTelegramMessage(message: string) {
+  try {
+    telegramBot.sendMessage("329746063", message);
+  } catch (e) {
+    console.error("sendMessage error: " + e.message);
+  }
+}
 async function sendMessage(message: string) {
   try {
     let notificationURL = Deno.env.get("notificationURL");
@@ -163,6 +181,7 @@ function url2ProxyInfo(url: string) {
   if (url.startsWith("ssr:")) {
     return parseSSR(url);
   }
+  console.log(url);
   return undefined;
 }
 
@@ -186,25 +205,43 @@ async function loadTemplate(): Promise<any> {
     );
   }
 }
-export async function getSubscribeDetail(specificHandleMediaProxy = true) {
-  console.log(specificHandleMediaProxy);
+function keywordsFilter(source: string, keywords: string[]) {
+  for (const key of keywords) {
+    if (source.indexOf(key) !== -1) {
+      return true;
+    }
+  }
+  return false;
+}
+export async function getSubscribeDetail(req: Request) {
   const allProxys = await fetchAllProxy();
-  const mediaProxy = allProxys.filter((p: any) => !p.name.startsWith("香港"));
   const templateObj = await loadTemplate();
   templateObj.proxies = allProxys;
-  if (specificHandleMediaProxy) {
-    templateObj["proxy-groups"][0].proxies = allProxys.map((p) => p.name);
-    templateObj["proxy-groups"][1].proxies = allProxys.map((p) => p.name);
-    templateObj["proxy-groups"][2].proxies = mediaProxy.map((p) => p.name);
-  } else {
-    templateObj["proxy-groups"][0].proxies = allProxys.map((p) => p.name);
-    templateObj["proxy-groups"][1].proxies = allProxys.map((p) => p.name);
-    templateObj["proxy-groups"][2].proxies = allProxys.map((p) => p.name);
-  }
+  templateObj["proxy-groups"].find((e: any) => e.id == "auto_best").proxies =
+    allProxys
+      .filter((p) =>
+        keywordsFilter(p.name, ["香港", "HK", "日本", "JP", "新加坡", "SG"])
+      )
+      .filter((p) => !keywordsFilter(p.name, ["2X", "3X", "4X", "5X", "10X"]))
+      .map((p) => p.name);
+  templateObj["proxy-groups"].find((e: any) => e.id == "specific").proxies =
+    allProxys.map((p) => p.name);
+  templateObj["proxy-groups"].find((e: any) => e.id == "best_gaming").proxies =
+    allProxys
+      .filter((p) => keywordsFilter(p.name, ["2X", "3X", "4X", "5X", "10X"]))
+      .map((p) => p.name);
   templateObj["timestamp"] = lastUpdateDate.toLocaleString("zh-CN", {
     dateStyle: "long",
     timeStyle: "medium",
   });
+  sendTelegramMessage(
+    `${lastUpdateDate.toLocaleString("zh-CN", {
+      timeStyle: "medium",
+    })}
+    SourceIP: ${req.ip}
+    SourceReqPath: ${req.url}
+    成功刷新：${templateObj.proxies.length} 个代理`
+  );
   if (lastRemoteUpdateSuccess) {
     sendMessage(
       `${lastUpdateDate.toLocaleString("zh-CN", {

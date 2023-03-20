@@ -8,7 +8,6 @@ dns:
   enable: true
   ipv6: false
   listen: 127.0.0.1:5450
-  enhanced-mode: redir-host
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
@@ -43,6 +42,7 @@ proxies:
 proxy-groups:
   - name: ♻️ 最优代理
     type: url-test
+    id: auto_best
     url: http://www.gstatic.com/generate_204
     interval: 3600
     proxies:
@@ -58,12 +58,14 @@ proxy-groups:
       - 英国-DP-01
   - name: 指定代理
     type: select
+    id: specific
     proxies:
       - ♻️ 最优代理
       - 媒体解锁
       - 🎯 全球直连
-  - name: 媒体解锁
+  - name: 倍率最优
     type: url-test
+    id: best_gaming
     url: http://www.gstatic.com/generate_204
     interval: 7200
     proxies:
@@ -78,14 +80,15 @@ proxy-groups:
     type: select
     proxies:
       - ♻️ 最优代理
+      - 倍率最优
       - 指定代理
       - 🔰 GFW
       - 🎯 全球直连
   - name: 🌍 国外媒体
     type: select
     proxies:
-      - 媒体解锁
       - ♻️ 最优代理
+      - 倍率最优
       - 指定代理
       - 🔰 GFW
       - 🎯 全球直连
@@ -94,12 +97,14 @@ proxy-groups:
     proxies:
       - ♻️ 最优代理
       - 指定代理
+      - 倍率最优
       - 🎯 全球直连
   - name: 基础代理
     type: select
     proxies:
       - ♻️ 最优代理
       - 指定代理
+      - 倍率最优
       - 🔰 GFW
       - 🎯 全球直连
   - name: 🎯 全球直连
