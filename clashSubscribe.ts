@@ -239,7 +239,7 @@ export async function getSubscribeDetail(req: Request) {
       timeStyle: "medium",
     })}
     SourceIP: ${req.ip}
-    SourceReqPath: ${req.url}
+    SourceReqPath: ${req.url.pathname}
     成功刷新：${templateObj.proxies.length} 个代理`
   );
   if (lastRemoteUpdateSuccess) {
