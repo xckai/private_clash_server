@@ -52,8 +52,7 @@ app.use((ctx)=>{
   })}
   SourceIP: ${ctx.request.ip}
   SourceReqPath: ${ctx.request.url.pathname}
-  未知源访问！`);
-  ctx.response.status = 404;
+  tracker 访问记录`);
 })
 console.log(
   `App listening on port ${port}, ${new Date().toLocaleString("zh-CN", {
