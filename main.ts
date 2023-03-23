@@ -19,11 +19,13 @@ const router = new Router();
 router.get("/proxy/:proxy", async (ctx) => {
   const params = ctx.params;
   const proxyName = params.proxy ?? "";
+  console.log("got proxyName")
   if (
     ["mac", "encoohp", "openwrt"].indexOf(proxyName) != -1 ||
     proxyName.indexOf("kai") != -1 ||
     proxyName.indexOf("yh") != -1
   ) {
+    console.log("start get detail")
     ctx.response.body = await getSubscribeDetail(ctx.request);
     return;
   }
