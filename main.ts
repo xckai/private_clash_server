@@ -25,6 +25,7 @@ router.get("/proxy/:proxy", async (ctx) => {
     proxyName.indexOf("yh") != -1
   ) {
     ctx.response.body = await getSubscribeDetail(ctx.request);
+    return;
   }
   sendTelegramMessage(`${new Date().toLocaleString("zh-CN", {
     timeStyle: "medium",
@@ -46,7 +47,7 @@ router.get("/", (ctx) => {
 
 const app = new Application();
 app.use(router.routes());
-app.use((ctx)=>{
+app.use((ctx) => {
   sendTelegramMessage(`${new Date().toLocaleString("zh-CN", {
     timeStyle: "medium",
   })}
