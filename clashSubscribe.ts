@@ -4,14 +4,11 @@ import { Request } from "https://deno.land/x/oak/mod.ts";
 
 import yaml from "https://esm.sh/js-yaml@4.1.0";
 import { decode as base64Decode } from "https://deno.land/std@0.164.0/encoding/base64.ts";
-import TelegramBot from "https://esm.sh/node-telegram-bot-api@0.61.0";
+
 let lastUpdateDate = new Date();
 let lastSuccessResp = Deno.env.get("bootstrapResp") ?? "";
 let lastRemoteUpdateSuccess = false;
-const telegramBot = new TelegramBot(
-  "5971031891:AAG5hAedEmTkjEEm_aGjc4d4YZ-RvBLL4n8",
-  { polling: false, webHook: false }
-);
+
 function getAllSubscribeUrl() {
   const url = [];
   for (let i = 0; i < 10; ++i) {
@@ -52,7 +49,19 @@ export async function fetchAllProxy() {
 }
 export function sendTelegramMessage(message: string) {
   try {
-    telegramBot.sendMessage("329746063", message);
+    const key = "5971031891:AAG5hAedEmTkjEEm_aGjc4d4YZ-RvBLL4n8"
+    fetch(`https://api.telegram.org/bot${key}/sendMessage`,
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'chat_id': 329746063, "text": message })
+      }).then(res =>
+        res.json()
+      ).then(v => console.log(v)).catch(e => {
+        console.error(e)
+      })
   } catch (e) {
     console.error("sendMessage error: " + e.message);
   }
@@ -236,6 +245,7 @@ export async function getSubscribeDetail(req: Request) {
   });
   sendTelegramMessage(
     `${lastUpdateDate.toLocaleString("zh-CN", {
+      timeZone: 'Asia/Shanghai',
       timeStyle: "medium",
     })}
     SourceIP: ${req.ip}
@@ -245,6 +255,7 @@ export async function getSubscribeDetail(req: Request) {
   if (lastRemoteUpdateSuccess) {
     sendMessage(
       `${lastUpdateDate.toLocaleString("zh-CN", {
+        timeZone: 'Asia/Shanghai',
         timeStyle: "medium",
       })}成功刷新：${templateObj.proxies.length} 个代理`
     );

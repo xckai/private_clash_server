@@ -1,9 +1,5 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import {
-  fetchAllProxy,
-  getSubscribeDetail,
-  sendTelegramMessage,
-} from "./clashSubscribe.ts";
+import { getSubscribeDetail, sendTelegramMessage } from "./clashSubscribe.ts";
 import "https://deno.land/x/dotenv/load.ts";
 
 const port = Deno.env.get("PORT") ?? "80";
@@ -19,17 +15,18 @@ const router = new Router();
 router.get("/proxy/:proxy", async (ctx) => {
   const params = ctx.params;
   const proxyName = params.proxy ?? "";
-  console.log("got proxyName")
+  console.log("got proxyName");
   if (
     ["mac", "encoohp", "openwrt"].indexOf(proxyName) != -1 ||
     proxyName.indexOf("kai") != -1 ||
     proxyName.indexOf("yh") != -1
   ) {
-    console.log("start get detail")
+    console.log("start get detail");
     ctx.response.body = await getSubscribeDetail(ctx.request);
     return;
   }
   sendTelegramMessage(`${new Date().toLocaleString("zh-CN", {
+    timeZone: "Asia/Shanghai",
     timeStyle: "medium",
   })}
   SourceIP: ${ctx.request.ip}
@@ -39,6 +36,7 @@ router.get("/proxy/:proxy", async (ctx) => {
 });
 router.get("/", (ctx) => {
   sendTelegramMessage(`${new Date().toLocaleString("zh-CN", {
+    timeZone: "Asia/Shanghai",
     timeStyle: "medium",
   })}
   SourceIP: ${ctx.request.ip}
@@ -51,12 +49,13 @@ const app = new Application();
 app.use(router.routes());
 app.use((ctx) => {
   sendTelegramMessage(`${new Date().toLocaleString("zh-CN", {
+    timeZone: "Asia/Shanghai",
     timeStyle: "medium",
   })}
   SourceIP: ${ctx.request.ip}
   SourceReqPath: ${ctx.request.url.pathname}
   tracker 访问记录`);
-})
+});
 console.log(
   `App listening on port ${port}, ${new Date().toLocaleString("zh-CN", {
     dateStyle: "long",
