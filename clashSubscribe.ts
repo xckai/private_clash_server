@@ -49,19 +49,19 @@ export async function fetchAllProxy() {
 }
 export function sendTelegramMessage(message: string) {
   try {
-    const key = "5971031891:AAG5hAedEmTkjEEm_aGjc4d4YZ-RvBLL4n8"
-    fetch(`https://api.telegram.org/bot${key}/sendMessage`,
-      {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 'chat_id': 329746063, "text": message })
-      }).then(res =>
-        res.json()
-      ).then(v => console.log(v)).catch(e => {
-        console.error(e)
-      })
+    const key = "5971031891:AAG5hAedEmTkjEEm_aGjc4d4YZ-RvBLL4n8";
+    fetch(`https://api.telegram.org/bot${key}/sendMessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ chat_id: 329746063, text: message })
+    })
+      .then((res) => res.json())
+      .then((v) => console.log(v))
+      .catch((e) => {
+        console.error(e);
+      });
   } catch (e) {
     console.error("sendMessage error: " + e.message);
   }
@@ -91,7 +91,7 @@ async function fetchWithTimeout(
   const id = setTimeout(() => controller.abort(), timeout);
   const response = await fetch(resource, {
     ...options,
-    signal: controller.signal,
+    signal: controller.signal
   });
   clearTimeout(id);
   return await response.text();
@@ -142,7 +142,7 @@ function parseSSR(url: string) {
     name: decode(params.get("remarks")),
     obfs_param: decode(params.get("obfsparam")),
     protocol_param: decode(params.get("protoparam")),
-    group: decode(params.get("group")),
+    group: decode(params.get("group"))
   };
 }
 function parseSS(url: string) {
@@ -157,7 +157,7 @@ function parseSS(url: string) {
     server: URI[1].split("#")[0].split(":")[0],
 
     port: parseInt(URI[1].split("#")[0].split(":")[1].split("?")[0]),
-    udp: true,
+    udp: true
   };
 
   const name = URI[1].split("#")[1];
@@ -175,7 +175,7 @@ function parseSS(url: string) {
       if (parsedProxy.plugin == "obfs") {
         parsedProxy["plugin-opts"] = {
           mode: pluginParam.get("obfs") || pluginParam.get("mode"),
-          host: pluginParam.get("obfs-host") || pluginParam.get("host"),
+          host: pluginParam.get("obfs-host") || pluginParam.get("host")
         };
       }
     }
@@ -231,22 +231,33 @@ export async function getSubscribeDetail(req: Request) {
       .filter((p) =>
         keywordsFilter(p.name, ["香港", "HK", "日本", "JP", "新加坡", "SG"])
       )
-      .filter((p) => !keywordsFilter(p.name, ["2X", "3X", "4X", "5X", "10X"]))
+      .filter(
+        (p) =>
+          !keywordsFilter(
+            p.name,
+            Array.from({ length: 10 }, (v, i) => i + 2 + "X")
+          )
+      )
       .map((p) => p.name);
   templateObj["proxy-groups"].find((e: any) => e.id == "specific").proxies =
     allProxys.map((p) => p.name);
   templateObj["proxy-groups"].find((e: any) => e.id == "best_gaming").proxies =
     allProxys
-      .filter((p) => keywordsFilter(p.name, ["2X", "3X", "4X", "5X", "10X"]))
+      .filter((p) =>
+        keywordsFilter(
+          p.name,
+          Array.from({ length: 10 }, (v, i) => i + 2 + "X")
+        )
+      )
       .map((p) => p.name);
   templateObj["timestamp"] = lastUpdateDate.toLocaleString("zh-CN", {
     dateStyle: "long",
-    timeStyle: "medium",
+    timeStyle: "medium"
   });
   sendTelegramMessage(
     `${lastUpdateDate.toLocaleString("zh-CN", {
-      timeZone: 'Asia/Shanghai',
-      timeStyle: "medium",
+      timeZone: "Asia/Shanghai",
+      timeStyle: "medium"
     })}
     SourceIP: ${req.ip}
     SourceReqPath: ${req.url.pathname}
@@ -255,8 +266,8 @@ export async function getSubscribeDetail(req: Request) {
   if (lastRemoteUpdateSuccess) {
     sendMessage(
       `${lastUpdateDate.toLocaleString("zh-CN", {
-        timeZone: 'Asia/Shanghai',
-        timeStyle: "medium",
+        timeZone: "Asia/Shanghai",
+        timeStyle: "medium"
       })}成功刷新：${templateObj.proxies.length} 个代理`
     );
   }
