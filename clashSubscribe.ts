@@ -314,6 +314,16 @@ export async function getSubscribeDetail(req: Request) {
         )
       )
       .map((p) => p.name);
+  if (
+    templateObj["proxy-groups"].find((e: any) => e.id == "best_gaming").proxies
+      .length == 0
+  ) {
+    templateObj["proxy-groups"].find(
+      (e: any) => e.id == "best_gaming"
+    ).proxies = templateObj["proxy-groups"].find(
+      (e: any) => e.id == "auto_best"
+    ).proxies;
+  }
   templateObj["timestamp"] = lastUpdateDate.toLocaleString("zh-CN", {
     dateStyle: "long",
     timeStyle: "medium"
