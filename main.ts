@@ -22,12 +22,19 @@ router.get("/proxy/:proxy", async (ctx) => {
     proxyName.indexOf("yh") != -1
   ) {
     console.log("start get detail");
-    ctx.response.body = await getSubscribeDetail(ctx.request);
+    const detail = await getSubscribeDetail(ctx.request);
+    ctx.response.body = detail.body;
+    if (detail.headers["subscription-userinfo"]) {
+      ctx.response.headers.set(
+        "subscription-userinfo",
+        detail.headers["subscription-userinfo"]
+      );
+    }
     return;
   }
   sendTelegramMessage(`${new Date().toLocaleString("zh-CN", {
     timeZone: "Asia/Shanghai",
-    timeStyle: "medium",
+    timeStyle: "medium"
   })}
   SourceIP: ${ctx.request.ip}
   SourceReqPath: ${ctx.request.url.pathname}
@@ -37,7 +44,7 @@ router.get("/proxy/:proxy", async (ctx) => {
 router.get("/", (ctx) => {
   sendTelegramMessage(`${new Date().toLocaleString("zh-CN", {
     timeZone: "Asia/Shanghai",
-    timeStyle: "medium",
+    timeStyle: "medium"
   })}
   SourceIP: ${ctx.request.ip}
   SourceReqPath: ${ctx.request.url.pathname}
@@ -50,7 +57,7 @@ app.use(router.routes());
 app.use((ctx) => {
   sendTelegramMessage(`${new Date().toLocaleString("zh-CN", {
     timeZone: "Asia/Shanghai",
-    timeStyle: "medium",
+    timeStyle: "medium"
   })}
   SourceIP: ${ctx.request.ip}
   SourceReqPath: ${ctx.request.url.pathname}
@@ -59,7 +66,7 @@ app.use((ctx) => {
 console.log(
   `App listening on port ${port}, ${new Date().toLocaleString("zh-CN", {
     dateStyle: "long",
-    timeStyle: "medium",
+    timeStyle: "medium"
   })}`
 );
 await app.listen({ port: parseInt(port) });

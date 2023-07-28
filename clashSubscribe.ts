@@ -1,10 +1,8 @@
 import { assert } from "https://deno.land/std@0.164.0/testing/asserts.ts";
 import * as path from "https://deno.land/std/path/mod.ts";
 import { Request } from "https://deno.land/x/oak/mod.ts";
-
 import yaml from "https://esm.sh/js-yaml@4.1.0";
 import { decode as base64Decode } from "https://deno.land/std@0.164.0/encoding/base64.ts";
-
 let lastUpdateDate = new Date();
 let lastSuccessResp = Deno.env.get("bootstrapResp") ?? "";
 let lastRemoteUpdateSuccess = false;
@@ -27,6 +25,41 @@ function getAllSubscribeUrl() {
   }
   console.log(url);
   return url;
+}
+async function fetchConfigInfo(): Promise<{
+  proxy: { name: string }[];
+  info: any;
+}> {
+  if (Deno.env.get("IS_CLASH") == "true") {
+    const reqs = getAllSubscribeUrl().map(async (u) => {
+      const req = await fetch(u, {
+        headers: { "User-Agent": "clash/2023" }
+      });
+      const body = await req.text();
+      const info = req.headers.get("subscription-userinfo");
+      return { body, info };
+    });
+    const req = (await Promise.allSettled(reqs)).filter(
+      (r) => r.status != "rejected"
+    );
+    const proxies = req
+      .map((r: any) => {
+        return (yaml.load(r.value.body) as any)["proxies"];
+      })
+      .reduce((p, crtValue) => p.concat(crtValue), []);
+    const infos = req.map((r: any) => {
+      return r.value.info;
+    });
+    return {
+      proxy: proxies,
+      info: infos[0]
+    };
+  } else {
+    return {
+      proxy: await fetchAllProxy(),
+      info: undefined
+    };
+  }
 }
 export async function fetchAllProxy() {
   const promises = getAllSubscribeUrl().map(
@@ -193,7 +226,30 @@ function url2ProxyInfo(url: string) {
   console.log(url);
   return undefined;
 }
+function parseUserInfo(info: string) {
+  if (info == undefined) {
+    return {};
+  } else {
+    const parts = info.split(";");
+    const data: any = {};
 
+    parts.forEach(function (part) {
+      part = part.trim();
+      const pair = part.split("=");
+      data[pair[0]] = pair[1];
+    });
+    const totalFreeGB =
+      (parseInt(data.total) - parseInt(data.download) - parseInt(data.upload)) /
+      Math.pow(1024, 3);
+    const expireDate = new Date(parseInt(data.expire) * 1000);
+    return {
+      totalFreeGB,
+      expireDate: expireDate.toLocaleString("zh-CN", {
+        timeZone: "Asia/Shanghai"
+      })
+    };
+  }
+}
 async function loadTemplate(): Promise<any> {
   const url = Deno.env.get("templateURL");
   if (url) {
@@ -223,13 +279,21 @@ function keywordsFilter(source: string, keywords: string[]) {
   return false;
 }
 export async function getSubscribeDetail(req: Request) {
-  const allProxys = await fetchAllProxy();
+  const proxyInfo = await fetchConfigInfo();
   const templateObj = await loadTemplate();
-  templateObj.proxies = allProxys;
+  templateObj.proxies = proxyInfo?.proxy;
   templateObj["proxy-groups"].find((e: any) => e.id == "auto_best").proxies =
-    allProxys
+    proxyInfo?.proxy
       .filter((p) =>
-        keywordsFilter(p.name, ["香港", "HK", "日本", "JP", "新加坡", "SG"])
+        keywordsFilter(p.name, [
+          "香港",
+          "HK",
+          "日本",
+          "JP",
+          "新加坡",
+          "SG",
+          "美国"
+        ])
       )
       .filter(
         (p) =>
@@ -240,9 +304,9 @@ export async function getSubscribeDetail(req: Request) {
       )
       .map((p) => p.name);
   templateObj["proxy-groups"].find((e: any) => e.id == "specific").proxies =
-    allProxys.map((p) => p.name);
+    proxyInfo?.proxy.map((p) => p.name);
   templateObj["proxy-groups"].find((e: any) => e.id == "best_gaming").proxies =
-    allProxys
+    proxyInfo?.proxy
       .filter((p) =>
         keywordsFilter(
           p.name,
@@ -254,6 +318,17 @@ export async function getSubscribeDetail(req: Request) {
     dateStyle: "long",
     timeStyle: "medium"
   });
+  const info = parseUserInfo(proxyInfo?.info);
+  console.debug(`
+   ${lastUpdateDate.toLocaleString("zh-CN", {
+     timeZone: "Asia/Shanghai"
+   })}
+    SourceIP: ${req.ip}
+    SourceReqPath: ${req.url.pathname}
+    刷新：${templateObj?.proxies?.length} 个代理
+    剩余流量：${info.totalFreeGB?.toFixed(2) ?? "--"} GB,
+    到期时间：${info.expireDate ?? "--"}
+    `);
   sendTelegramMessage(
     `${lastUpdateDate.toLocaleString("zh-CN", {
       timeZone: "Asia/Shanghai",
@@ -261,16 +336,15 @@ export async function getSubscribeDetail(req: Request) {
     })}
     SourceIP: ${req.ip}
     SourceReqPath: ${req.url.pathname}
-    成功刷新：${templateObj.proxies.length} 个代理`
+    刷新：${templateObj?.proxies?.length} 个代理
+    剩余流量：${info.totalFreeGB?.toFixed(2) ?? "--"} GB,
+    到期时间：${info.expireDate ?? "--"}
+    `
   );
-  if (lastRemoteUpdateSuccess) {
-    sendMessage(
-      `${lastUpdateDate.toLocaleString("zh-CN", {
-        timeZone: "Asia/Shanghai",
-        timeStyle: "medium"
-      })}成功刷新：${templateObj.proxies.length} 个代理`
-    );
-  }
-  console.debug("数据解析完成,共计 %s 个代理", templateObj.proxies.length);
-  return yaml.dump(templateObj);
+  return {
+    body: yaml.dump(templateObj),
+    headers: {
+      "subscription-userinfo": proxyInfo?.info
+    }
+  };
 }
