@@ -283,7 +283,7 @@ rules:
   - DOMAIN-SUFFIX,cloudflare-dns.com,基础代理
   - DOMAIN-SUFFIX,codesandbox.io,个人偏好
   - DOMAIN-SUFFIX,stackoverflow.com,个人偏好
-  - DOMAIN-SUFFIX,msftauth.net.io,个人偏好
+  - DOMAIN-SUFFIX,msftauth.net,个人偏好
   - DOMAIN-SUFFIX,azureedge.net,个人偏好
   - DOMAIN-SUFFIX,ghcr.io,个人偏好
   - DOMAIN-SUFFIX,k8s.io,个人偏好
