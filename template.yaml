@@ -293,6 +293,7 @@ rules:
   - DOMAIN-SUFFIX,sstatic.net,个人偏好
   - DOMAIN-SUFFIX,ant.design,个人偏好
   - DOMAIN-SUFFIX,v2ex.com,个人偏好
+  - DOMAIN-SUFFIX,robocorp.com,个人偏好
   - DOMAIN-SUFFIX,packages.microsoft.com,个人偏好
   - DOMAIN-SUFFIX,unsplash.com,个人偏好
   - DOMAIN-SUFFIX,dev.azure.com,个人偏好
@@ -602,6 +603,7 @@ rules:
   - DOMAIN-SUFFIX,poloniex.com,🔰 GFW
   - DOMAIN-SUFFIX,uniswap.org,🔰 GFW
   - DOMAIN-SUFFIX,zb.com,🔰 GFW
+  - DOMAIN-SUFFIX,discord.gg,🔰 GFW
   - DOMAIN-SUFFIX,discord.com,🔰 GFW
   - DOMAIN-SUFFIX,discordapp.com,🔰 GFW
   - DOMAIN-SUFFIX,discordapp.net,🔰 GFW
