@@ -294,6 +294,9 @@ rules:
   - DOMAIN-SUFFIX,ant.design,个人偏好
   - DOMAIN-SUFFIX,v2ex.com,个人偏好
   - DOMAIN-SUFFIX,robocorp.com,个人偏好
+  - DOMAIN-SUFFIX,yarnpkg.com,个人偏好
+  - DOMAIN-SUFFIX,npmjs.com,个人偏好
+  - DOMAIN-SUFFIX,docker.com,个人偏好
   - DOMAIN-SUFFIX,packages.microsoft.com,个人偏好
   - DOMAIN-SUFFIX,unsplash.com,个人偏好
   - DOMAIN-SUFFIX,dev.azure.com,个人偏好
