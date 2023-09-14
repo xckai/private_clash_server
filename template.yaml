@@ -287,6 +287,7 @@ rules:
   - DOMAIN-SUFFIX,azureedge.net,个人偏好
   - DOMAIN-SUFFIX,ghcr.io,个人偏好
   - DOMAIN-SUFFIX,k8s.io,个人偏好
+  - DOMAIN-SUFFIX,nuget.org,个人偏好
   - DOMAIN-SUFFIX,1lib.at,个人偏好
   - DOMAIN-SUFFIX,docker.io,个人偏好
   - DOMAIN-SUFFIX,dksb.store,个人偏好
