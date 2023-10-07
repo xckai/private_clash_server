@@ -283,30 +283,36 @@ rules:
   - DOMAIN-SUFFIX,cloudflare-dns.com,基础代理
   - DOMAIN-SUFFIX,codesandbox.io,个人偏好
   - DOMAIN-SUFFIX,stackoverflow.com,个人偏好
-  - DOMAIN-SUFFIX,msftauth.net,个人偏好
-  - DOMAIN-SUFFIX,azureedge.net,个人偏好
-  - DOMAIN-SUFFIX,ghcr.io,个人偏好
-  - DOMAIN-SUFFIX,k8s.io,个人偏好
   - DOMAIN-SUFFIX,nuget.org,个人偏好
   - DOMAIN-SUFFIX,1lib.at,个人偏好
-  - DOMAIN-SUFFIX,docker.io,个人偏好
   - DOMAIN-SUFFIX,openai.com,个人偏好
   - DOMAIN-SUFFIX,dksb.store,个人偏好
   - DOMAIN-SUFFIX,sstatic.net,个人偏好
   - DOMAIN-SUFFIX,ant.design,个人偏好
   - DOMAIN-SUFFIX,v2ex.com,个人偏好
   - DOMAIN-SUFFIX,robocorp.com,个人偏好
+#container
+  - DOMAIN-SUFFIX,docker.io,个人偏好
+  - DOMAIN-SUFFIX,docker.com,个人偏好
+  - DOMAIN-SUFFIX,ghcr.io,个人偏好
+  - DOMAIN-SUFFIX,k8s.io,个人偏好
+
+#npm
   - DOMAIN-SUFFIX,yarnpkg.com,个人偏好
   - DOMAIN-SUFFIX,npmjs.com,个人偏好
-  - DOMAIN-SUFFIX,docker.com,个人偏好
+#微软
   - DOMAIN-SUFFIX,packages.microsoft.com,个人偏好
   - DOMAIN-SUFFIX,unsplash.com,个人偏好
   - DOMAIN-SUFFIX,dev.azure.com,个人偏好
   - DOMAIN-SUFFIX,vsassets.io,个人偏好
+  - DOMAIN-SUFFIX,msftauth.net,个人偏好
+  - DOMAIN-SUFFIX,azureedge.net,个人偏好
+  - DOMAIN-SUFFIX,maven.org,个人偏好
+# github
   - DOMAIN-SUFFIX,github.com,个人偏好
   - DOMAIN-SUFFIX,github.io,个人偏好
-  - DOMAIN-SUFFIX,maven.org,个人偏好
   - DOMAIN-SUFFIX,githubusercontent.com,个人偏好
+  - DOMAIN-SUFFIX,githubassets.com,个人偏好
   - DOMAIN-SUFFIX,medium.com,🌍 国外媒体
   - DOMAIN-SUFFIX,cnn.com,🌍 国外媒体
   - DOMAIN-SUFFIX,cnn.io,🌍 国外媒体
@@ -632,9 +638,6 @@ rules:
   - DOMAIN-SUFFIX,rocksdb.org,🔰 GFW
   - DOMAIN-SUFFIX,whatsapp.com,🔰 GFW
   - DOMAIN-SUFFIX,whatsapp.net,🔰 GFW
-  - DOMAIN-SUFFIX,github.com,🔰 GFW
-  - DOMAIN-SUFFIX,github.io,🔰 GFW
-  - DOMAIN-SUFFIX,githubusercontent.com,🔰 GFW
   - DOMAIN-SUFFIX,appspot.com,🔰 GFW
   - DOMAIN-SUFFIX,blogger.com,🔰 GFW
   - DOMAIN-SUFFIX,getoutline.org,🔰 GFW
