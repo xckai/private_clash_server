@@ -17,7 +17,7 @@ router.get("/proxy/:proxy", async (ctx) => {
   const proxyName = params.proxy ?? "";
   console.log("got proxyName");
   if (
-    ["mac", "encoohp", "openwrt"].indexOf(proxyName) != -1 ||
+    ["mac", "openwrt"].indexOf(proxyName) != -1 ||
     proxyName.indexOf("kai") != -1 ||
     proxyName.indexOf("yh") != -1
   ) {
