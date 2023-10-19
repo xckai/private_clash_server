@@ -281,6 +281,11 @@ function keywordsFilter(source: string, keywords: string[]) {
 export async function getSubscribeDetail(req: Request) {
   const proxyInfo = await fetchConfigInfo();
   const templateObj = await loadTemplate();
+// lan port control
+  if(req.url.href.includes("allowlan")){
+    templateObj['allow-lan'] = true
+  }
+
   templateObj.proxies = proxyInfo?.proxy;
   templateObj["proxy-groups"].find((e: any) => e.id == "auto_best").proxies =
     proxyInfo?.proxy
