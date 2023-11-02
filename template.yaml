@@ -299,6 +299,7 @@ rules:
   - DOMAIN-SUFFIX,docker.com,个人偏好
   - DOMAIN-SUFFIX,ghcr.io,个人偏好
   - DOMAIN-SUFFIX,k8s.io,个人偏好
+  - DOMAIN-SUFFIX,gcr.io,个人偏好
 
 #npm
   - DOMAIN-SUFFIX,yarnpkg.com,个人偏好
