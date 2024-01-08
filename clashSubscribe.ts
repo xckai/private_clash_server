@@ -285,7 +285,9 @@ export async function getSubscribeDetail(req: Request) {
   if(req.url.href.includes("allowlan")){
     templateObj['allow-lan'] = true
   }
-
+  if(req.url.searchParams.get('dns')!=""){
+    templateObj['dns']['nameserver'] = [req.url.searchParams.get('dns')];
+  }
   templateObj.proxies = proxyInfo?.proxy;
   templateObj["proxy-groups"].find((e: any) => e.id == "auto_best").proxies =
     proxyInfo?.proxy
