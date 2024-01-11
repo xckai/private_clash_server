@@ -285,7 +285,7 @@ export async function getSubscribeDetail(req: Request) {
   if(req.url.href.includes("allowlan")){
     templateObj['allow-lan'] = true
   }
-  if(req.url.searchParams.get('dns')!=""){
+  if(req.url.searchParams.get('dns')!="" && req.url.searchParams.get('dns')!=null && req.url.searchParams.get('dns')!=undefined){
     templateObj['dns']['nameserver'] = [req.url.searchParams.get('dns')];
   }
   templateObj.proxies = proxyInfo?.proxy;
