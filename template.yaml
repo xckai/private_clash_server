@@ -316,6 +316,7 @@ rules:
   # github
   - DOMAIN-SUFFIX,github.com,个人偏好
   - DOMAIN-SUFFIX,github.io,个人偏好
+  - DOMAIN-SUFFIX,opensubtitles.com,个人偏好
   - DOMAIN-SUFFIX,githubusercontent.com,个人偏好
   - DOMAIN-SUFFIX,githubassets.com,个人偏好
   - DOMAIN-SUFFIX,medium.com,🌍 国外媒体
