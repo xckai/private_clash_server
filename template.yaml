@@ -319,6 +319,7 @@ rules:
   - DOMAIN-SUFFIX,githubusercontent.com,个人偏好
   - DOMAIN-SUFFIX,githubassets.com,个人偏好
   - DOMAIN-SUFFIX,medium.com,🌍 国外媒体
+  - DOMAIN-SUFFIX,pincong.rocks,🌍 国外媒体
   - DOMAIN-SUFFIX,cnn.com,🌍 国外媒体
   - DOMAIN-SUFFIX,cnn.io,🌍 国外媒体
   - DOMAIN-SUFFIX,scmp.com,🌍 国外媒体
