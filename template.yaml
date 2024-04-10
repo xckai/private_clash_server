@@ -295,6 +295,7 @@ rules:
   - DOMAIN-SUFFIX,ant.design,个人偏好
   - DOMAIN-SUFFIX,v2ex.com,个人偏好
   - DOMAIN-SUFFIX,robocorp.com,个人偏好
+  - DOMAIN-SUFFIX,nicehash.com,个人偏好
   #container
   - DOMAIN-SUFFIX,docker.io,个人偏好
   - DOMAIN-SUFFIX,docker.com,个人偏好
