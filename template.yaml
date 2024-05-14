@@ -290,6 +290,7 @@ rules:
   - DOMAIN-SUFFIX,nuget.org,个人偏好
   - DOMAIN-SUFFIX,1lib.at,个人偏好
   - DOMAIN-SUFFIX,openai.com,个人偏好
+  - DOMAIN-SUFFIX,chatgpt.com,个人偏好
   - DOMAIN-SUFFIX,dksb.store,个人偏好
   - DOMAIN-SUFFIX,sstatic.net,个人偏好
   - DOMAIN-SUFFIX,ant.design,个人偏好
