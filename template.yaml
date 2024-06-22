@@ -321,6 +321,9 @@ rules:
   - DOMAIN-SUFFIX,opensubtitles.com,个人偏好
   - DOMAIN-SUFFIX,githubusercontent.com,个人偏好
   - DOMAIN-SUFFIX,githubassets.com,个人偏好
+  #private 
+  - DOMAIN-SUFFIX,x.com,个人偏好
+  - DOMAIN-SUFFIX,x.jp,个人偏好
   - DOMAIN-SUFFIX,medium.com,🌍 国外媒体
   - DOMAIN-SUFFIX,pincong.rocks,🌍 国外媒体
   - DOMAIN-SUFFIX,cnn.com,🌍 国外媒体
