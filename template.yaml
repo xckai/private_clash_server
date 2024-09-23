@@ -326,6 +326,7 @@ rules:
   - DOMAIN-SUFFIX,x.com,个人偏好
   - DOMAIN-SUFFIX,x.jp,个人偏好
   - DOMAIN-SUFFIX,plex.com,个人偏好
+  - DOMAIN-SUFFIX,plex.tv,个人偏好
   - DOMAIN-SUFFIX,medium.com,🌍 国外媒体
   - DOMAIN-SUFFIX,pincong.rocks,🌍 国外媒体
   - DOMAIN-SUFFIX,cnn.com,🌍 国外媒体
