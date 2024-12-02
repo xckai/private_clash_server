@@ -286,6 +286,7 @@ rules:
   - IP-CIDR,208.67.220.220/32,基础代理,no-resolve
   - DOMAIN-SUFFIX,cloudflare-dns.com,基础代理
   - DOMAIN-SUFFIX,codesandbox.io,个人偏好
+  - DOMAIN-SUFFIX,coursera.org,个人偏好
   - DOMAIN-SUFFIX,stackoverflow.com,个人偏好
   - DOMAIN-SUFFIX,nuget.org,个人偏好
   - DOMAIN-SUFFIX,1lib.at,个人偏好
