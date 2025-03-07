@@ -299,6 +299,7 @@ rules:
   - DOMAIN-SUFFIX,robocorp.com,个人偏好
   - DOMAIN-SUFFIX,nicehash.com,个人偏好
   - DOMAIN-SUFFIX,onenote.com,个人偏好
+  - DOMAIN-SUFFIX,cursor.com,个人偏好
   #container
   - DOMAIN-SUFFIX,docker.io,个人偏好
   - DOMAIN-SUFFIX,docker.com,个人偏好
@@ -1162,5 +1163,5 @@ rules:
   - DOMAIN,ocsp.digicert.com,🔰 GFW
   - DOMAIN-SUFFIX,inkbunny.net,🔰 GFW
   - DOMAIN-SUFFIX,metapix.net,🔰 GFW
-  - DOMAIN-SUFFIX,s3.amazonaws.com,🔰 GFW
+  - DOMAIN-SUFFIX,amazonaws.com,🔰 GFW
   - DOMAIN,international-gfe.download.nvidia.com,🔰 GFW
