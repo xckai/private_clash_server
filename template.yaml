@@ -297,11 +297,13 @@ rules:
   - DOMAIN-SUFFIX,ant.design,个人偏好
   - DOMAIN-SUFFIX,v2ex.com,个人偏好
   - DOMAIN-SUFFIX,robocorp.com,个人偏好
-  - DOMAIN-SUFFIX,cursor.sh,个人偏好
-  - DOMAIN-SUFFIX,cursor.com,个人偏好
   - DOMAIN-SUFFIX,nicehash.com,个人偏好
   - DOMAIN-SUFFIX,onenote.com,个人偏好
+  - DOMAIN-SUFFIX,nats.io,个人偏好
+  - DOMAIN-SUFFIX,cursor.sh,个人偏好
   - DOMAIN-SUFFIX,cursor.com,个人偏好
+  - DOMAIN-SUFFIX,cursorapi.com,个人偏好
+  - DOMAIN-SUFFIX,cursor-cdn.com,个人偏好
   #container
   - DOMAIN-SUFFIX,docker.io,个人偏好
   - DOMAIN-SUFFIX,docker.com,个人偏好
@@ -323,12 +325,13 @@ rules:
   # github
   - DOMAIN-SUFFIX,github.com,个人偏好
   - DOMAIN-SUFFIX,github.io,个人偏好
+  - DOMAIN-SUFFIX,gitbook.com,个人偏好
+  - DOMAIN-SUFFIX,gstatic.com,个人偏好
   - DOMAIN-SUFFIX,opensubtitles.com,个人偏好
   - DOMAIN-SUFFIX,githubusercontent.com,个人偏好
   - DOMAIN-SUFFIX,githubassets.com,个人偏好
-  #private 
+  #private
   - DOMAIN-SUFFIX,x.com,个人偏好
-  - DOMAIN-SUFFIX,x.jp,个人偏好
   - DOMAIN-SUFFIX,plex.com,个人偏好
   - DOMAIN-SUFFIX,plex.tv,个人偏好
   - DOMAIN-SUFFIX,medium.com,🌍 国外媒体
