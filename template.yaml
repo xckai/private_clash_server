@@ -319,6 +319,7 @@ rules:
   - DOMAIN-SUFFIX,vsassets.io,个人偏好
   - DOMAIN-SUFFIX,msftauth.net,个人偏好
   - DOMAIN-SUFFIX,azureedge.net,个人偏好
+  - DOMAIN-SUFFIX,onedrive.com,个人偏好
   - DOMAIN-SUFFIX,maven.org,个人偏好
   # github
   - DOMAIN-SUFFIX,github.com,个人偏好
