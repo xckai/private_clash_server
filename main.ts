@@ -2,7 +2,7 @@ import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import { getSubscribeDetail, sendTelegramMessage } from "./clashSubscribe.ts";
 import "https://deno.land/x/dotenv/load.ts";
 
-const port = Deno.env.get("PORT") ?? "80";
+const port = Deno.env.get("PORT") ?? "18880";
 console.log(port, Deno.env.get("subscribeURL"));
 const router = new Router();
 

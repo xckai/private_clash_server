@@ -299,38 +299,17 @@ export async function getSubscribeDetail(req: Request) {
           "JP",
           "新加坡",
           "SG",
-          "美国"
+          "美国",
+          "台湾",
+          "TW",
         ])
-      )
-      .filter(
-        (p) =>
-          !keywordsFilter(
-            p.name,
-            Array.from({ length: 10 }, (v, i) => i + 2 + "X")
-          )
       )
       .map((p) => p.name);
   templateObj["proxy-groups"].find((e: any) => e.id == "specific").proxies =
     proxyInfo?.proxy.map((p) => p.name);
-  templateObj["proxy-groups"].find((e: any) => e.id == "best_gaming").proxies =
-    proxyInfo?.proxy
-      .filter((p) =>
-        keywordsFilter(
-          p.name,
-          Array.from({ length: 10 }, (v, i) => i + 2 + "X")
-        )
-      )
-      .map((p) => p.name);
-  if (
-    templateObj["proxy-groups"].find((e: any) => e.id == "best_gaming").proxies
-      .length == 0
-  ) {
-    templateObj["proxy-groups"].find(
-      (e: any) => e.id == "best_gaming"
-    ).proxies = templateObj["proxy-groups"].find(
-      (e: any) => e.id == "auto_best"
-    ).proxies;
-  }
+  templateObj["proxy-groups"].find((e: any) => e.id == "stable_proxy").proxies =
+    proxyInfo?.proxy.map((p) => p.name);
+
   templateObj["timestamp"] = lastUpdateDate.toLocaleString("zh-CN", {
     dateStyle: "long",
     timeStyle: "medium"
