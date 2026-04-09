@@ -257,8 +257,9 @@ proxy-groups:
     type: select
     proxies:
       - DIRECT
-      - 自动流量
       - 指定代理
+      - ♻️ 最优代理
+      - 稳定代理
 rules:
   - DOMAIN-SUFFIX,xckai.top,DIRECT
   - DOMAIN-SUFFIX,xckai.synology.me,DIRECT
