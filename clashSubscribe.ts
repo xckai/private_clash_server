@@ -6,7 +6,7 @@ import { decode as base64Decode } from "https://deno.land/std@0.164.0/encoding/b
 let lastUpdateDate = new Date();
 let lastSuccessResp = Deno.env.get("bootstrapResp") ?? "";
 let lastRemoteUpdateSuccess = false;
-
+let resoveIP = true;
 function getAllSubscribeUrl() {
   const url = [];
   for (let i = 0; i < 10; ++i) {
@@ -71,14 +71,17 @@ export async function fetchAllProxy() {
   if (results.length == 0) {
     throw new Error("所有订阅不可用");
   }
-  return results
-    .map((r) =>
-      decodeBase64ToString(r)
-        .split("\r\n")
-        .map(url2ProxyInfo)
-        .filter((p: any) => !!p)
+  return (
+    await Promise.all(
+      results.map(async (r) =>
+        (
+          await Promise.all(
+            decodeBase64ToString(r).split("\r\n").map(url2ProxyInfo)
+          )
+        ).filter((p: any) => !!p)
+      )
     )
-    .reduce((p, crtValue) => p.concat(crtValue), []);
+  ).reduce((p, crtValue) => p.concat(crtValue), []);
 }
 export function sendTelegramMessage(message: string) {
   try {
@@ -162,11 +165,34 @@ export async function getProxyListAsync(): Promise<string> {
 function decode(str: string | null) {
   return str && base64Decode(str);
 }
-function parseSSR(url: string) {
+function isIPAddress(host: string): boolean {
+  // IPv4
+  if (/^(\d{1,3}\.){3}\d{1,3}$/.test(host)) return true;
+  // IPv6
+  if (host.includes(":") && /^[0-9a-fA-F:.\[\]]+$/.test(host)) return true;
+  return false;
+}
+async function resolveHostToIP(host: string): Promise<string> {
+  if(!resoveIP) return host;
+  if (isIPAddress(host)) return host;
+  try {
+    const ips = await Deno.resolveDns(host, "A");
+    if (ips.length > 0) {
+      console.debug(`DNS resolve ${host} -> ${ips[0]}`);
+      return ips[0];
+    }
+  } catch (e) {
+    console.error(`DNS resolve failed for ${host}:`, e);
+  }
+  return host;
+}
+async function parseSSR(url: string) {
   const URI = decodeBase64ToString(url.replace("ssr://", "")).split(":");
   const params = new URLSearchParams(URI[5].split("/")[1]);
+  const server = await resolveHostToIP(URI[0]);
+  console.log(server,"server");
   return {
-    server: URI[0],
+    server,
     server_port: Number(URI[1]),
     protocol: URI[2],
     method: URI[3],
@@ -178,16 +204,17 @@ function parseSSR(url: string) {
     group: decode(params.get("group"))
   };
 }
-function parseSS(url: string) {
+async function parseSS(url: string) {
   const URI = url.replace("ss://", "").split("@");
   const params = new URLSearchParams(URI[1].split("?")[1]);
+  const server = await resolveHostToIP(URI[1].split("#")[0].split(":")[0]);
   const parsedProxy: any = {
     type: "ss",
     cipher: decodeBase64ToString(URI[0]).split(":")[0],
 
     password: decodeBase64ToString(URI[0]).split(":")[1],
 
-    server: URI[1].split("#")[0].split(":")[0],
+    server: server,
 
     port: parseInt(URI[1].split("#")[0].split(":")[1].split("?")[0]),
     udp: true
@@ -215,15 +242,14 @@ function parseSS(url: string) {
   }
   return parsedProxy;
 }
-function url2ProxyInfo(url: string) {
+async function url2ProxyInfo(url: string) {
   url = decodeURIComponent(url);
   if (url.startsWith("ss:")) {
-    return parseSS(url);
+    return await parseSS(url);
   }
   if (url.startsWith("ssr:")) {
-    return parseSSR(url);
+    return await parseSSR(url);
   }
-  console.log(url);
   return undefined;
 }
 function parseUserInfo(info: string) {
@@ -279,12 +305,19 @@ function keywordsFilter(source: string, keywords: string[]) {
   return false;
 }
 export async function getSubscribeDetail(req: Request) {
+  if(req.url.href.includes("useip")){
+    resoveIP = true;
+  } else {
+    resoveIP = false;
+  }
   const proxyInfo = await fetchConfigInfo();
   const templateObj = await loadTemplate();
 // lan port control
   if(req.url.href.includes("allowlan")){
     templateObj['allow-lan'] = true
   }
+
+ 
   if(req.url.searchParams.get('dns')!="" && req.url.searchParams.get('dns')!=null && req.url.searchParams.get('dns')!=undefined){
     templateObj['dns']['nameserver'] = [req.url.searchParams.get('dns')];
   }
