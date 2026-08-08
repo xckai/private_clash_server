@@ -1,1 +1,7 @@
 .env
+node_modules/
+.wrangler/
+.wrangler-dist/
+.wrangler-dist-check/
+dist/
+*.log
