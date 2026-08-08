@@ -184,6 +184,19 @@
     "https://deno.land/x/oak@v17.2.0/utils/streams.ts": "c85ae197f5046d58d5a3e42221254a6c8e63172f9f01b77631e480e1dcc90e05",
     "https://deno.land/x/oak@v17.2.0/utils/type_guards.ts": "766b94850c9058a41ad8beac5b6df5a55cd5445bf77a356b520b6cb47f488697",
     "https://esm.sh/js-yaml@4.1.0": "bcf0af0b249d1550f4a6fdc5fba54691b569921c14f13899c65986fb2f3a3cfb",
-    "https://esm.sh/js-yaml@4.1.0/denonext/js-yaml.mjs": "58161912bc8d4324ea6db70b755396bf64c1ed5aff87607253b74166d0866ecc"
+    "https://esm.sh/js-yaml@4.1.0/denonext/js-yaml.mjs": "58161912bc8d4324ea6db70b755396bf64c1ed5aff87607253b74166d0866ecc",
+    "https://esm.sh/js-yaml@5.2.3": "cab9132b9492015757e66d3ea95c01319d2a4074f467765636ea061972f69676",
+    "https://esm.sh/js-yaml@5.2.3/denonext/js-yaml.mjs": "ede737c1aa440886a971da9f4a578431ac89626bae2745cd1c7c9ce7104acd8d"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@types/js-yaml@^4.0.9",
+        "npm:@types/node@^26.2.0",
+        "npm:js-yaml@^5.2.3",
+        "npm:typescript@^7.0.2",
+        "npm:wrangler@^4.120.0"
+      ]
+    }
   }
 }

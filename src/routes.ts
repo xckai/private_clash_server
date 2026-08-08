@@ -1,19 +1,11 @@
 import { type Context, Router } from "oak";
 import { getSubscribeDetail, sendTelegramMessage } from "./clash.ts";
-
-function isAllowedProxy(name: string): boolean {
-  return (
-    name === "mac" ||
-    name === "openwrt" ||
-    name.includes("kai") ||
-    name.includes("yh")
-  );
-}
+import { isAllowedProxy } from "./core.ts";
 
 function formatAccessMessage(context: Context, message: string): string {
   const time = new Date().toLocaleString("zh-CN", {
     timeZone: "Asia/Shanghai",
-    timeStyle: "medium"
+    timeStyle: "medium",
   });
   return `${time}
 SourceIP: ${context.request.ip}

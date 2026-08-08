@@ -13,10 +13,12 @@ app.use((context) => {
 });
 
 console.log(
-  `App listening on port ${port}, ${new Date().toLocaleString("zh-CN", {
-    dateStyle: "long",
-    timeStyle: "medium",
-  })}`,
+  `App listening on port ${port}, ${
+    new Date().toLocaleString("zh-CN", {
+      dateStyle: "long",
+      timeStyle: "medium",
+    })
+  }`,
 );
 
 await app.listen({ port });

@@ -1,9 +1,12 @@
 {
+  "compilerOptions": {
+    "types": []
+  },
   "imports": {
     "dotenv/load": "https://deno.land/x/dotenv@v3.2.2/load.ts",
     "oak": "https://deno.land/x/oak@v17.2.0/mod.ts",
     "std/path": "https://deno.land/std@0.224.0/path/mod.ts",
-    "yaml": "https://esm.sh/js-yaml@4.1.0"
+    "js-yaml": "https://esm.sh/js-yaml@5.2.3"
   },
   "tasks": {
     "start": "deno run --allow-net --allow-env --allow-read --unsafely-ignore-certificate-errors main.ts",
