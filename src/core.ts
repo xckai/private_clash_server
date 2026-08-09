@@ -248,11 +248,13 @@ async function fetchSubscription(
       );
     }
     body = await response.text();
+    console.log("发送请求成功");
     userInfo = response.headers.get("subscription-userinfo") ?? undefined;
   }
   let proxies = parseClashSubscription(body);
   if (!proxies) {
     let decodedText: string;
+    console.log("订阅不是YAML,尝试解码Base64");
     try {
       decodedText = decodeBase64(body);
     } catch (error) {
@@ -265,7 +267,7 @@ async function fetchSubscription(
   if (proxies.length === 0) {
     throw new Error("订阅中没有可用的 Clash、SS 或 SSR 节点");
   }
-
+  console.log("proxies", proxies);
   proxies = await resolveProxyHosts(proxies, resolveHost);
 
   return { proxies, userInfo };
