@@ -36,7 +36,7 @@ export async function getSubscribeDetail(request: Request) {
     subscriptionBody
   });
 
-  console.debug(result.message);
+  console.log(`[订阅详情]\n${result.message}`);
   void sendTelegramMessage(result.message);
   return {
     body: result.body,

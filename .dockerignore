@@ -1,0 +1,17 @@
+.git
+.vscode
+node_modules
+.env
+.dev.vars
+.wrangler
+.wrangler-dist
+.wrangler-dist-check
+dist
+*.log
+package.json
+package-lock.json
+tsconfig.json
+yaml.d.ts
+wrangler.toml
+worker.ts
+README.md

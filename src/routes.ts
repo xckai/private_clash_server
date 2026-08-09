@@ -23,20 +23,24 @@ export function createRouter(): Router {
   router.get("/proxy/:proxy", async (context) => {
     const proxyName = context.params.proxy ?? "";
     if (!isAllowedProxy(proxyName)) {
+      console.warn(`[拒绝请求] 未授权客户端 proxy=${proxyName}`);
       notifyAccess(context, "未知源访问！");
       context.response.status = 404;
       return;
     }
 
+    console.log(`[开始处理] 生成订阅 proxy=${proxyName}`);
     const detail = await getSubscribeDetail(context.request);
     context.response.body = detail.body;
     const userInfo = detail.headers["subscription-userinfo"];
     if (userInfo) {
       context.response.headers.set("subscription-userinfo", userInfo);
     }
+    console.log(`[订阅已生成] proxy=${proxyName}`);
   });
 
   router.get("/", (context) => {
+    console.warn("[拒绝请求] 访问根路径");
     notifyAccess(context, "未知源访问！");
     context.response.body = "404";
   });
@@ -45,5 +49,8 @@ export function createRouter(): Router {
 }
 
 export function trackUnmatchedRequest(context: Context): void {
+  console.warn(
+    `[未匹配路由] ${context.request.method} ${context.request.url.pathname}`,
+  );
   notifyAccess(context, "tracker 访问记录");
 }

@@ -236,12 +236,12 @@ async function fetchSubscription(
     body = subscriptionBody;
   } else {
     try {
-      console.log("fetchSubscription", subscribeUrl);
+      console.log("开始请求订阅：", subscribeUrl);
       const response = await fetch(subscribeUrl, {
         headers: {
           "User-Agent": "clash/2023"
         },
-        signal: AbortSignal.timeout(15_000)
+        signal: AbortSignal.timeout(25_000)
       });
       body = await response.text();
       if (!response.ok) {
@@ -275,7 +275,6 @@ async function fetchSubscription(
   if (proxies.length === 0) {
     throw new Error("订阅中没有可用的 Clash、SS 或 SSR 节点");
   }
-  console.log("proxies", proxies);
   proxies = await resolveProxyHosts(proxies, resolveHost);
 
   return { proxies, userInfo };
