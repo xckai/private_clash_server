@@ -1,9 +1,9 @@
 import type { Request } from "oak";
 import { fromFileUrl } from "std/path";
-import { getSubscriptionUrl, getTelegramConfig } from "./config.ts";
+import { getSubscriptionUrl, getTelegramConfig, isDebug } from "./config.ts";
 import {
   generateSubscription,
-  sendTelegramMessage as sendMessage,
+  sendTelegramMessage as sendMessage
 } from "./core.ts";
 
 async function resolveHost(host: string): Promise<string | undefined> {
@@ -20,20 +20,26 @@ export async function sendTelegramMessage(message: string): Promise<void> {
 
 export async function getSubscribeDetail(request: Request) {
   const templatePath = fromFileUrl(
-    new URL("../template.yaml", import.meta.url),
+    new URL("../template.yaml", import.meta.url)
   );
+  const subscriptionBody = isDebug()
+    ? await Deno.readTextFile(
+        fromFileUrl(new URL("../test.txt", import.meta.url))
+      )
+    : undefined;
   const result = await generateSubscription({
-    subscribeUrl: getSubscriptionUrl(),
+    subscribeUrl: subscriptionBody ? "debug://test.txt" : getSubscriptionUrl(),
     templateText: await Deno.readTextFile(templatePath),
     requestUrl: request.url,
     clientIp: request.ip,
     resolveHost,
+    subscriptionBody
   });
 
   console.debug(result.message);
   void sendTelegramMessage(result.message);
   return {
     body: result.body,
-    headers: { "subscription-userinfo": result.userInfo },
+    headers: { "subscription-userinfo": result.userInfo }
   };
 }

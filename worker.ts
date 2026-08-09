@@ -1,15 +1,22 @@
 import templateText from "./template.yaml";
+import testBody from "./test.txt";
 import {
   generateSubscription,
   isAllowedProxy,
   sendTelegramMessage,
-  type TelegramConfig,
+  type TelegramConfig
 } from "./src/core.ts";
 
 interface Env {
-  subscribeURL: string;
+  subscribeURL?: string;
+  debug?: string;
+  DEBUG?: string;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
+}
+
+function isDebug(env: Env): boolean {
+  return Boolean(env.debug?.trim() || env.DEBUG?.trim());
 }
 
 interface WorkerContext {
@@ -24,21 +31,19 @@ function getTelegramConfig(env: Env): TelegramConfig | undefined {
   if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) return undefined;
   return {
     token: env.TELEGRAM_BOT_TOKEN,
-    chatId: env.TELEGRAM_CHAT_ID,
+    chatId: env.TELEGRAM_CHAT_ID
   };
 }
 
 function formatAccessMessage(
   request: Request,
   clientIp: string,
-  message: string,
+  message: string
 ): string {
-  return `${
-    new Date().toLocaleString("zh-CN", {
-      timeZone: "Asia/Shanghai",
-      timeStyle: "medium",
-    })
-  }
+  return `${new Date().toLocaleString("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    timeStyle: "medium"
+  })}
 SourceIP: ${clientIp}
 SourceReqPath: ${new URL(request.url).pathname}
 ${message}`;
@@ -55,11 +60,11 @@ async function resolveHostWithDoh(host: string): Promise<string | undefined> {
     url.searchParams.set("type", "A");
     const response = await fetch(url, {
       headers: { Accept: "application/dns-json" },
-      signal: AbortSignal.timeout(5_000),
+      signal: AbortSignal.timeout(5_000)
     });
     if (!response.ok) return undefined;
 
-    const data = await response.json() as DnsJsonResponse;
+    const data = (await response.json()) as DnsJsonResponse;
     return data.Answer?.find((answer) => answer.type === 1)?.data;
   } catch {
     return undefined;
@@ -71,13 +76,13 @@ function notify(
   env: Env,
   context: WorkerContext,
   clientIp: string,
-  message: string,
+  message: string
 ): void {
   context.waitUntil(
     sendTelegramMessage(
       formatAccessMessage(request, clientIp, message),
-      getTelegramConfig(env),
-    ),
+      getTelegramConfig(env)
+    )
   );
 }
 
@@ -85,7 +90,7 @@ export default {
   async fetch(
     request: Request,
     env: Env,
-    context: WorkerContext,
+    context: WorkerContext
   ): Promise<Response> {
     const url = new URL(request.url);
     const clientIp = request.headers.get("CF-Connecting-IP") ?? "unknown";
@@ -95,9 +100,10 @@ export default {
       return new Response("404");
     }
 
-    const proxyMatch = request.method === "GET"
-      ? url.pathname.match(/^\/proxy\/([^/]+)$/)
-      : null;
+    const proxyMatch =
+      request.method === "GET"
+        ? url.pathname.match(/^\/proxy\/([^/]+)$/)
+        : null;
     if (!proxyMatch) {
       notify(request, env, context, clientIp, "tracker 访问记录");
       return new Response("Not Found", { status: 404 });
@@ -108,25 +114,27 @@ export default {
       notify(request, env, context, clientIp, "未知源访问！");
       return new Response("Not Found", { status: 404 });
     }
-    if (!env.subscribeURL?.trim()) {
+    const debug = isDebug(env);
+    if (!debug && !env.subscribeURL?.trim()) {
       return new Response("subscribeURL binding is required", { status: 500 });
     }
 
     try {
       const result = await generateSubscription({
-        subscribeUrl: env.subscribeURL,
+        subscribeUrl: debug ? "debug://test.txt" : env.subscribeURL!.trim(),
         templateText,
         requestUrl: url,
         clientIp,
         resolveHost: resolveHostWithDoh,
+        subscriptionBody: debug ? testBody : undefined
       });
       console.debug(result.message);
       context.waitUntil(
-        sendTelegramMessage(result.message, getTelegramConfig(env)),
+        sendTelegramMessage(result.message, getTelegramConfig(env))
       );
 
       const headers = new Headers({
-        "Content-Type": "text/yaml; charset=utf-8",
+        "Content-Type": "text/yaml; charset=utf-8"
       });
       if (result.userInfo) {
         headers.set("subscription-userinfo", result.userInfo);
@@ -136,5 +144,5 @@ export default {
       console.error("生成订阅失败", error);
       return new Response("Failed to generate subscription", { status: 502 });
     }
-  },
+  }
 };

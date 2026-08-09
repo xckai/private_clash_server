@@ -11,6 +11,11 @@ export function getPort(): number {
   return port;
 }
 
+export function isDebug(): boolean {
+  const value = Deno.env.get("debug")?.trim() ?? Deno.env.get("DEBUG")?.trim();
+  return Boolean(value);
+}
+
 export function getSubscriptionUrl(): string {
   const url = Deno.env.get("subscribeURL")?.trim();
   if (!url) throw new Error("订阅 URL 未设置，请配置 subscribeURL 环境变量");
