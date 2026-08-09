@@ -235,21 +235,29 @@ async function fetchSubscription(
     console.log("fetchSubscription debug: using local body");
     body = subscriptionBody;
   } else {
-    console.log("fetchSubscription", subscribeUrl);
-    const response = await fetch(subscribeUrl, {
-      headers: {
-        "User-Agent": "clash/2023"
-      },
-      signal: AbortSignal.timeout(15_000)
-    });
-    if (!response.ok) {
-      throw new Error(
-        `订阅请求失败：${response.status} ${response.statusText}`
-      );
+    try {
+      console.log("fetchSubscription", subscribeUrl);
+      const response = await fetch(subscribeUrl, {
+        headers: {
+          "User-Agent": "clash/2023"
+        },
+        signal: AbortSignal.timeout(15_000)
+      });
+      body = await response.text();
+      if (!response.ok) {
+        console.log(
+          `订阅请求失败：${response.status} ${response.statusText} ${body}`
+        );
+        throw new Error(
+          `订阅请求失败：${response.status} ${response.statusText}`
+        );
+      }
+      console.log("发送请求成功");
+      userInfo = response.headers.get("subscription-userinfo") ?? undefined;
+    } catch (error) {
+      console.error("fetchSubscription error", error);
+      throw error;
     }
-    body = await response.text();
-    console.log("发送请求成功");
-    userInfo = response.headers.get("subscription-userinfo") ?? undefined;
   }
   let proxies = parseClashSubscription(body);
   if (!proxies) {
