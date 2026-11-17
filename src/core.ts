@@ -24,6 +24,12 @@ export interface TelegramConfig {
 
 export type HostResolver = (host: string) => Promise<string | undefined>;
 
+/** URL 参数 `pf`：缺省用 subscribeURL；`pf=1` 用 subscribeURL1，以此类推。 */
+export function getSubscribeUrlEnvKey(searchParams: URLSearchParams): string {
+  const pf = searchParams.get("pf")?.trim();
+  return pf ? `subscribeURL${pf}` : "subscribeURL";
+}
+
 const AUTO_PROXY_KEYWORDS = [
   "香港",
   "HK",

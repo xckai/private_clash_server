@@ -9,6 +9,8 @@
   "description": "一个基于 Deno 和 Oak 的轻量 Clash 订阅服务。服务从远端 Clash YAML 中读取 `proxies`，原样写入本地 `template.yaml`，再返回完整配置。SS、SSR 等节点的字段不会被重新解析或改写。",
   "scripts": {
     "dev": "wrangler dev",
+    "dev:deno": "deno run --watch --allow-net --allow-env --allow-read --unsafely-ignore-certificate-errors main.ts",
+    "debug:deno": "deno run --inspect-brk --allow-net --allow-env --allow-read --unsafely-ignore-certificate-errors main.ts",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && wrangler deploy --dry-run",
     "deploy": "wrangler deploy"

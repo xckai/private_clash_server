@@ -20,7 +20,7 @@ function notifyAccess(context: Context, message: string): void {
 export function createRouter(): Router {
   const router = new Router();
 
-  router.get("/proxy/:proxy", async (context) => {
+  router.get("/clash/:proxy", async (context) => {
     const proxyName = context.params.proxy ?? "";
     if (!isAllowedProxy(proxyName)) {
       console.warn(`[拒绝请求] 未授权客户端 proxy=${proxyName}`);

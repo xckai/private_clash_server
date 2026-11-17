@@ -28,7 +28,9 @@ export async function getSubscribeDetail(request: Request) {
       )
     : undefined;
   const result = await generateSubscription({
-    subscribeUrl: subscriptionBody ? "debug://test.txt" : getSubscriptionUrl(),
+    subscribeUrl: subscriptionBody
+      ? "debug://test.txt"
+      : getSubscriptionUrl(request.url.searchParams),
     templateText: await Deno.readTextFile(templatePath),
     requestUrl: request.url,
     clientIp: request.ip,

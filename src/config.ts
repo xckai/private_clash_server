@@ -1,3 +1,5 @@
+import { getSubscribeUrlEnvKey } from "./core.ts";
+
 const DEFAULT_PORT = 18880;
 
 export function getPort(): number {
@@ -16,9 +18,10 @@ export function isDebug(): boolean {
   return Boolean(value);
 }
 
-export function getSubscriptionUrl(): string {
-  const url = Deno.env.get("subscribeURL")?.trim();
-  if (!url) throw new Error("订阅 URL 未设置，请配置 subscribeURL 环境变量");
+export function getSubscriptionUrl(searchParams?: URLSearchParams): string {
+  const key = getSubscribeUrlEnvKey(searchParams ?? new URLSearchParams());
+  const url = Deno.env.get(key)?.trim();
+  if (!url) throw new Error(`订阅 URL 未设置，请配置 ${key} 环境变量`);
   return url;
 }
 

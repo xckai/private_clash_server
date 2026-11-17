@@ -2,6 +2,7 @@ import templateText from "./template.yaml";
 import testBody from "./test.txt";
 import {
   generateSubscription,
+  getSubscribeUrlEnvKey,
   isAllowedProxy,
   sendTelegramMessage,
   type TelegramConfig
@@ -9,11 +10,21 @@ import {
 
 interface Env {
   subscribeURL?: string;
+  subscribeURL1?: string;
   debug?: string;
   DEBUG?: string;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
+  [key: string]: string | undefined;
 }
+
+function getSubscriptionUrl(env: Env, searchParams: URLSearchParams): string {
+  const key = getSubscribeUrlEnvKey(searchParams);
+  const url = env[key]?.trim();
+  if (!url) throw new Error(`订阅 URL 未设置，请配置 ${key}`);
+  return url;
+}
+
 
 function isDebug(env: Env): boolean {
   return Boolean(env.debug?.trim() || env.DEBUG?.trim());
@@ -115,13 +126,20 @@ export default {
       return new Response("Not Found", { status: 404 });
     }
     const debug = isDebug(env);
-    if (!debug && !env.subscribeURL?.trim()) {
-      return new Response("subscribeURL binding is required", { status: 500 });
+    let subscribeUrl = "debug://test.txt";
+    if (!debug) {
+      try {
+        subscribeUrl = getSubscriptionUrl(env, url.searchParams);
+      } catch (error) {
+        const key = getSubscribeUrlEnvKey(url.searchParams);
+        console.error(error);
+        return new Response(`${key} binding is required`, { status: 500 });
+      }
     }
 
     try {
       const result = await generateSubscription({
-        subscribeUrl: debug ? "debug://test.txt" : env.subscribeURL!.trim(),
+        subscribeUrl,
         templateText,
         requestUrl: url,
         clientIp,

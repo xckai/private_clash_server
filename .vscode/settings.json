@@ -1,4 +1,7 @@
 {
   "deno.enable": true,
-  "deno.unstable": true
+  "deno.unstable": true,
+  "deno.env": {
+    "subscribeURL": "https://mysub.cc/subscribe/41587/uJ1pcfVJQE/all/",
+  }
 }
